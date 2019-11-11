@@ -101,9 +101,14 @@ namespace IntComSys.AI
 
 			for (int i = weights.Length - 2; i >= 0; i--)
 			{
-				//Расчитываем градиенты для H слоя
-
-
+				// Расчитываем градиенты для H слоя
+				// Запоминаем выходные значения в вектор градиентов
+				gradients[i] = outputs[i];
+				// Для выходных значений применяем производную функцию активации
+				gradients[i].Map(Mathf.SigmoidDerivative);
+				// Умножаем вес нейрона на градиент нейрона с которым связан этот нейрон, и умножаем получившееся значение на пред. действие
+				gradients[i].Scale(Vecf.Mul(gradients[i], Matf.Transpose(weights[i])));
+				// Пересчитываем силы связей
 				// Запоминаем старые веса
 				oldDeltaWeights = deltaWeights[i];
 				// Умножаем каждый из весов на momentum rate

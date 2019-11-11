@@ -153,18 +153,5 @@ namespace IntComSys.Computing
 		}
 
 		#endregion
-
-		public static Matd Transpose(Matd m)
-		{
-			Matd result = new Matd(m.cols, m.rows);
-			for (int y = 0; y < m.rows; y++)
-			{
-				for (int x = 0, leftIndex = y * m.cols; x < m.cols; x++, leftIndex++)
-				{
-					result.elements[x * result.cols + y] = m.elements[leftIndex];
-				}
-			}
-			return result;
-		}
 	}
 }

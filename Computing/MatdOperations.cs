@@ -1,7 +1,22 @@
-﻿namespace IntComSys.Computing
+﻿using System;
+
+namespace IntComSys.Computing
 {
 	public partial struct Matd
 	{
+		public static Matd Transpose(Matd m)
+		{
+			Matd result = new Matd(m.cols, m.rows);
+			for (int y = 0; y < m.rows; y++)
+			{
+				for (int x = 0, leftIndex = y * m.cols; x < m.cols; x++, leftIndex++)
+				{
+					result.elements[x * result.cols + y] = m.elements[leftIndex];
+				}
+			}
+			return result;
+		}
+
 		public static bool operator ==(Matd left, Matd right)
 		{
 			if (left.rows != right.rows ||
@@ -32,6 +47,10 @@
 
 		public static Matd operator +(Matd left, Matd right)
 		{
+			if (left.rows != right.rows ||
+				left.cols != right.cols)
+				throw new ArgumentException();
+
 			Matd result = new Matd(left.rows, left.cols);
 			for (int i = 0; i < result.size; i++)
 			{
@@ -52,6 +71,10 @@
 
 		public void Add(Matd m)
 		{
+			if (rows != m.rows ||
+				cols != m.cols)
+				throw new ArgumentException();
+
 			for (int i = 0; i < size; i++)
 			{
 				elements[i] += m.elements[i];
@@ -68,6 +91,10 @@
 
 		public static Matd operator -(Matd left, Matd right)
 		{
+			if (left.rows != right.rows ||
+				left.cols != right.cols)
+				throw new ArgumentException();
+
 			Matd result = new Matd(left.rows, left.cols);
 			for (int i = 0; i < result.size; i++)
 			{
@@ -88,6 +115,10 @@
 
 		public void Sub(Matd m)
 		{
+			if (rows != m.rows ||
+				cols != m.cols)
+				throw new ArgumentException();
+
 			for (int i = 0; i < size; i++)
 			{
 				elements[i] -= m.elements[i];
@@ -106,6 +137,9 @@
 
 		public static Matd Mul(Matd left, Matd right)
 		{
+			if (left.cols != right.rows)
+				throw new ArgumentException();
+
 			Matd result = new Matd(left.rows, right.cols);
 			for (int y = 0; y < left.rows; y++)
 			{
@@ -124,6 +158,9 @@
 
 		public static Matd Mul(Vecf v, Matd m)
 		{
+			if (v.size != m.rows)
+				throw new ArgumentException();
+
 			Matd result = new Matd(1, m.cols);
 			for (int col = 0; col < m.cols; col++)
 			{
@@ -139,6 +176,9 @@
 
 		public static Matd Mul(Matd m, Vecf v)
 		{
+			if (m.cols != 1)
+				throw new ArgumentException();
+
 			Matd result = new Matd(m.rows, v.size);
 			for (int row = 0; row < result.rows; row++)
 			{
@@ -169,6 +209,10 @@
 
 		public static Matd Scale(Matd m1, Matd m2)
 		{
+			if (m1.rows != m2.rows ||
+				m1.cols != m2.cols)
+				throw new ArgumentException();
+
 			Matd m = new Matd(m1.rows, m2.cols);
 			for (int i = 0; i < m.size; i++)
 			{
@@ -189,6 +233,10 @@
 
 		public void Scale(Matd m)
 		{
+			if (rows != m.rows ||
+				cols != m.cols)
+				throw new ArgumentException();
+
 			for (int i = 0; i < size; i++)
 			{
 				elements[i] *= m.elements[i];

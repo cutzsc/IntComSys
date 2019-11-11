@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IntComSys.Computing
 {
@@ -38,10 +34,26 @@ namespace IntComSys.Computing
 
 		public static Vecd operator +(Vecd left, Vecd right)
 		{
+			if (left.size != right.size)
+				throw new ArgumentException();
+
 			Vecd result = new Vecd(left.size);
 			for (int i = 0; i < result.size; i++)
 			{
 				result.elements[i] = left.elements[i] + right.elements[i];
+			}
+			return result;
+		}
+
+		public static Vecd operator +(Vecd left, double[] right)
+		{
+			if (left.size != right.Length)
+				throw new ArgumentException();
+
+			Vecd result = new Vecd(left.size);
+			for (int i = 0; i < result.size; i++)
+			{
+				result.elements[i] = left.elements[i] + right[i];
 			}
 			return result;
 		}
@@ -58,9 +70,23 @@ namespace IntComSys.Computing
 
 		public void Add(Vecd v)
 		{
+			if (size != v.size)
+				throw new ArgumentException();
+
 			for (int i = 0; i < size; i++)
 			{
 				elements[i] += v.elements[i];
+			}
+		}
+
+		public void Add(double[] v)
+		{
+			if (size != v.Length)
+				throw new ArgumentException();
+
+			for (int i = 0; i < size; i++)
+			{
+				elements[i] += v[i];
 			}
 		}
 
@@ -74,6 +100,9 @@ namespace IntComSys.Computing
 
 		public static Vecd operator -(Vecd left, Vecd right)
 		{
+			if (left.size != right.size)
+				throw new ArgumentException();
+
 			Vecd result = new Vecd(left.size);
 			for (int i = 0; i < result.size; i++)
 			{
@@ -84,10 +113,26 @@ namespace IntComSys.Computing
 
 		public static Vecd operator -(double[] left, Vecd right)
 		{
+			if (left.Length != right.size)
+				throw new ArgumentException();
+
 			Vecd result = new Vecd(left.Length);
 			for (int i = 0; i < result.size; i++)
 			{
 				result.elements[i] = left[i] - right.elements[i];
+			}
+			return result;
+		}
+
+		public static Vecd operator -(Vecd left, double[] right)
+		{
+			if (left.size != right.Length)
+				throw new ArgumentException();
+
+			Vecd result = new Vecd(left.size);
+			for (int i = 0; i < result.size; i++)
+			{
+				result.elements[i] = left.elements[i] - right[i];
 			}
 			return result;
 		}
@@ -104,9 +149,23 @@ namespace IntComSys.Computing
 
 		public void Sub(Vecd v)
 		{
+			if (size != v.size)
+				throw new ArgumentException();
+
 			for (int i = 0; i < size; i++)
 			{
 				elements[i] -= v.elements[i];
+			}
+		}
+
+		public void Sub(double[] v)
+		{
+			if (size != v.Length)
+				throw new ArgumentException();
+
+			for (int i = 0; i < size; i++)
+			{
+				elements[i] -= v[i];
 			}
 		}
 
@@ -120,6 +179,9 @@ namespace IntComSys.Computing
 
 		public static Vecd Mul(Vecd v, Matf m)
 		{
+			if (v.size != m.rows)
+				throw new ArgumentException();
+
 			Vecd result = new Vecd(m.cols);
 
 			for (int col = 0; col < m.cols; col++)
@@ -149,6 +211,9 @@ namespace IntComSys.Computing
 
 		public void Scale(Vecd v)
 		{
+			if (size != v.size)
+				throw new ArgumentException();
+
 			for (int i = 0; i < size; i++)
 			{
 				elements[i] *= v.elements[i];
