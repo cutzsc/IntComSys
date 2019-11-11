@@ -1,4 +1,4 @@
-﻿namespace Computing
+﻿namespace IntComSys.Computing
 {
 	public static class Mathf
 	{
@@ -12,9 +12,9 @@
 			return (float)(1 / (1 + System.Math.Exp(-x)));
 		}
 
-		public static float SigmoidDerivative(double x)
+		public static float SigmoidDerivative(float x)
 		{
-			return (float)(x * (1 - x));
+			return (x * (1 - x));
 		}
 	}
 }

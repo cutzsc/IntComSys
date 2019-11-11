@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Computing
+namespace IntComSys.Computing
 {
 	public static class Math
 	{

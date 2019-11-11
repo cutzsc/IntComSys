@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Computing
+namespace IntComSys.Computing
 {
 	public partial struct Vecd
 	{
@@ -78,6 +78,16 @@ namespace Computing
 			for (int i = 0; i < result.size; i++)
 			{
 				result.elements[i] = left.elements[i] - right.elements[i];
+			}
+			return result;
+		}
+
+		public static Vecd operator -(double[] left, Vecd right)
+		{
+			Vecd result = new Vecd(left.Length);
+			for (int i = 0; i < result.size; i++)
+			{
+				result.elements[i] = left[i] - right.elements[i];
 			}
 			return result;
 		}

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Computing
+﻿namespace IntComSys.Computing
 {
 	public partial struct Vecf
 	{
@@ -78,6 +72,16 @@ namespace Computing
 			for (int i = 0; i < result.size; i++)
 			{
 				result.elements[i] = left.elements[i] - right.elements[i];
+			}
+			return result;
+		}
+
+		public static Vecf operator -(float[] left, Vecf right)
+		{
+			Vecf result = new Vecf(left.Length);
+			for (int i = 0; i < result.size; i++)
+			{
+				result.elements[i] = left[i] - right.elements[i];
 			}
 			return result;
 		}

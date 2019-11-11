@@ -1,4 +1,4 @@
-﻿namespace Computing
+﻿namespace IntComSys.Computing
 {
 	public partial struct Matd
 	{
