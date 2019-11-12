@@ -6,13 +6,7 @@ namespace IntComSys.Computing
 	{
 		public readonly int size;
 
-		float[] elements;
-
-		public float this[int index]
-		{
-			get { return elements[index]; }
-			set { elements[index] = value; }
-		}
+		public readonly float[] elements;
 
 		public Vecf(int size)
 		{

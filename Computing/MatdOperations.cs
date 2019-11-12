@@ -167,7 +167,7 @@ namespace IntComSys.Computing
 				double sum = 0;
 				for (int i = 0; i < v.size; i++)
 				{
-					sum += v[i] * m.elements[i * m.cols + col];
+					sum += v.elements[i] * m.elements[i * m.cols + col];
 				}
 				result.elements[col] = sum;
 			}
@@ -184,7 +184,7 @@ namespace IntComSys.Computing
 			{
 				for (int col = 0, index = row * result.cols; col < result.cols; col++, index++)
 				{
-					result.elements[index] = m.elements[row] * v[col];
+					result.elements[index] = m.elements[row] * v.elements[col];
 				}
 			}
 			return result;
@@ -197,7 +197,7 @@ namespace IntComSys.Computing
 			{
 				for (int col = 0, index = row * result.cols; col < result.cols; col++, index++)
 				{
-					result.elements[index] = vertical[row] * horizontal[col];
+					result.elements[index] = vertical.elements[row] * horizontal.elements[col];
 				}
 			}
 			return result;

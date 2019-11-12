@@ -6,13 +6,7 @@ namespace IntComSys.Computing
 	{
 		public readonly int size;
 
-		double[] elements;
-
-		public double this[int index]
-		{
-			get { return elements[index]; }
-			set { elements[index] = value; }
-		}
+		public readonly double[] elements;
 
 		public Vecd(int size)
 		{

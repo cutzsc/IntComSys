@@ -36,10 +36,10 @@ namespace IntComSys.AI
 				// Установить количество выходных значений (нейронов) для i-го слоя, +1 нейрон для bias
 				outputs[i] = new Vecf(dimension[i] + 1);
 				// Установка значения для bias
-				outputs[i][dimension[i]] = 1;
+				outputs[i].elements[dimension[i]] = 1;
 				// Количество градиентов соответствует количество нейронов на i-ом слое, кроме bias
 				// Так как bias не имеет входных связей
-				gradients[i] = new Vecf(dimension[i]);
+				gradients[i] = new Vecf(dimension[i + 1]);
 				// Установка количества связей для i-го слоя
 				// Матрица будет иметь dimension[i]+1 строк (кол-во нейронов +1 для bias) и dimension[i+1] столбцов (кол-во нейронов на следующем слое)
 				weights[i] = new Matf(dimension[i] + 1, dimension[i + 1]);
@@ -78,24 +78,23 @@ namespace IntComSys.AI
 
 		public void BackPropagation(float[] targets, float eta, float alpha)
 		{
-			// Расчитываем градиенты для O слоя
+			// Расчитываем градиенты для выходного слоя
 			// Запоминаем выходные значения в вектор градиентов
-			gradients[gradients.Length - 1] = outputs[outputs.Length - 1];
+			gradients[gradients.Length - 1].Set(outputs[outputs.Length - 1]);
 			// Для выходных значений применяем производную функцию активации
 			gradients[gradients.Length - 1].Map(Mathf.SigmoidDerivative);
 			// Умножаем получившееся значения на разницу между искомым и нужным результатами
 			gradients[gradients.Length - 1].Scale(targets - outputs[outputs.Length - 1]);
 
-			// Запоминаем старые веса
-			Matf oldDeltaWeights = deltaWeights[deltaWeights.Length - 1];
-			// Умножаем каждый из весов на momentum rate
-			oldDeltaWeights.Scale(alpha);
-			// Расчитываем новые веса eta * output * gradient
+			// Пересчитываем силы связей
+			// Находим momentum
+			Matf momentum = Matf.Scale(deltaWeights[deltaWeights.Length - 1], alpha);
+			// Расчитываем новые веса, eta * output * gradient
 			// eta - learning rate, output - значение нейрона от которого идет связь, gradient - градиент нейрона к которому идет связь
 			deltaWeights[deltaWeights.Length - 1] = Matf.Mul(outputs[outputs.Length - 2], gradients[gradients.Length - 1]);
 			deltaWeights[deltaWeights.Length - 1].Scale(eta);
 			// Прибавляем momentum rate к learning rate
-			deltaWeights[deltaWeights.Length - 1].Add(oldDeltaWeights);
+			deltaWeights[deltaWeights.Length - 1].Add(momentum);
 			// Обновляем веса
 			weights[weights.Length - 1].Add(deltaWeights[deltaWeights.Length - 1]);
 
@@ -103,22 +102,21 @@ namespace IntComSys.AI
 			{
 				// Расчитываем градиенты для H слоя
 				// Запоминаем выходные значения в вектор градиентов
-				gradients[i] = outputs[i];
+				gradients[i].Set(outputs[i]);
 				// Для выходных значений применяем производную функцию активации
 				gradients[i].Map(Mathf.SigmoidDerivative);
 				// Умножаем вес нейрона на градиент нейрона с которым связан этот нейрон, и умножаем получившееся значение на пред. действие
 				gradients[i].Scale(Vecf.Mul(gradients[i], Matf.Transpose(weights[i])));
+
 				// Пересчитываем силы связей
-				// Запоминаем старые веса
-				oldDeltaWeights = deltaWeights[i];
-				// Умножаем каждый из весов на momentum rate
-				oldDeltaWeights.Scale(alpha);
+				// Находим momentum rate
+				momentum = Matf.Scale(deltaWeights[i], alpha);
 				// Расчитываем новые веса eta * output * gradient
 				// eta - learning rate, output - значение нейрона от которого идет связь, gradient - градиент нейрона к которому идет связь
 				deltaWeights[i] = Matf.Mul(outputs[i], gradients[i]);
 				deltaWeights[i].Scale(eta);
 				// Прибавляем momentum rate к learning rate
-				deltaWeights[i].Add(oldDeltaWeights);
+				deltaWeights[i].Add(momentum);
 				// Обновляем веса
 				weights[i].Add(deltaWeights[i]);
 			}
