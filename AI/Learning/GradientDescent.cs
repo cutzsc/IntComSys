@@ -12,5 +12,6 @@ namespace AI.Learning
 		{
 			throw new NotImplementedException();
 		}
+
 	}
 }

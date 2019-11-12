@@ -78,6 +78,19 @@ namespace IntComSys.Computing
 			return result;
 		}
 
+		public Matd SubMat(int y, int yLen, int x, int xLen)
+		{
+			Matd result = new Matd(yLen, xLen);
+			for (int i = y, offset = y * xLen + x; i < yLen; i++, offset = i * xLen)
+			{
+				for (int j = x; j < xLen; j++, offset++)
+				{
+					result.elements[offset] = elements[offset];
+				}
+			}
+			return result;
+		}
+
 		#region map
 
 		public void Map(Func<double> fn)

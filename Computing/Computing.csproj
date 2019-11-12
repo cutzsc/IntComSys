@@ -44,12 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mat.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Mathf.cs" />
     <Compile Include="Matd.cs" />
     <Compile Include="MatdOperations.cs" />
     <Compile Include="Matf.cs" />
     <Compile Include="MatfOperations.cs" />
+    <Compile Include="MatOperations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\Prog.cs" />
     <Compile Include="Vecd.cs" />

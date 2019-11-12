@@ -7,27 +7,35 @@ using IntComSys.Computing;
 
 namespace IntComSys.AI
 {
-	public abstract class NeuralNetwork<T>
+	public abstract class NeuralNetwork<T, V, M>
 	{
 		public readonly int[] dimension;
-		public readonly int numLayers;
+		public readonly int layersCount;
+
+		protected V[] outputs;
+		protected M[] weights;
 
 		public abstract T[] LastGuess { get; }
 
 		public NeuralNetwork(params int[] dimension)
 		{
-			numLayers = dimension.Length;
-			// Запомнить размерность нейронной сети
-			this.dimension = new int[numLayers];
+			layersCount = dimension.Length;
+			this.dimension = new int[layersCount];
 
-			for (int i = 0; i < numLayers; i++)
+			for (int i = 0; i < layersCount; i++)
 			{
 				this.dimension[i] = dimension[i];
 			}
 		}
 
 		public abstract void Bind(T minWeight, T maxWeight);
-		public abstract T[] Predict(T[] input);
+
 		public abstract void FeedForward(T[] input);
+		public abstract T[] Predict(T[] input);
+
+		public abstract T[] GetArrayOutputs(int layer);
+		public abstract T[,] GetArrayWeights(int toLayer);
+		public abstract V GetVectorOutputs(int layer);
+		public abstract M GetMatrixWeights(int toLayer);
 	}
 }

@@ -7,14 +7,12 @@ using IntComSys.Computing;
 
 namespace IntComSys.AI
 {
-	public class FeedForwardNetwork : NeuralNetwork<float>
+	public class FeedForwardNetwork : NeuralNetwork<float, Vecf, Matf>
 	{
-		Vecf[] outputs;
-		Vecf[] gradients;
-		Matf[] weights;
-		Matf[] deltaWeights;
+		public Vecf[] gradients;
+		public Matf[] deltaWeights;
 
-		public override float[] LastGuess => outputs[outputs.Length - 1].ToArray();
+		public override float[] LastGuess => outputs[layersCount - 1].ToArray();
 
 		public FeedForwardNetwork(params int[] dimension)
 			: base(dimension)
@@ -80,33 +78,33 @@ namespace IntComSys.AI
 		{
 			// Расчитываем градиенты для выходного слоя
 			// Запоминаем выходные значения в вектор градиентов
-			gradients[gradients.Length - 1].Set(outputs[outputs.Length - 1]);
+			gradients[layersCount - 2].Set(outputs[layersCount - 1]);
 			// Для выходных значений применяем производную функцию активации
-			gradients[gradients.Length - 1].Map(Mathf.SigmoidDerivative);
+			gradients[layersCount - 2].Map(Mathf.SigmoidDerivative);
 			// Умножаем получившееся значения на разницу между искомым и нужным результатами
-			gradients[gradients.Length - 1].Scale(targets - outputs[outputs.Length - 1]);
+			gradients[layersCount - 2].Scale(targets - outputs[layersCount - 1]);
 
 			// Пересчитываем силы связей
 			// Находим momentum
-			Matf momentum = Matf.Scale(deltaWeights[deltaWeights.Length - 1], alpha);
+			Matf momentum = Matf.Scale(deltaWeights[layersCount - 2], alpha);
 			// Расчитываем новые веса, eta * output * gradient
 			// eta - learning rate, output - значение нейрона от которого идет связь, gradient - градиент нейрона к которому идет связь
-			deltaWeights[deltaWeights.Length - 1] = Matf.Mul(outputs[outputs.Length - 2], gradients[gradients.Length - 1]);
-			deltaWeights[deltaWeights.Length - 1].Scale(eta);
+			deltaWeights[layersCount - 2] = Matf.Mul(outputs[layersCount - 2], gradients[layersCount - 2]);
+			deltaWeights[layersCount - 2].Scale(eta);
 			// Прибавляем momentum rate к learning rate
 			deltaWeights[deltaWeights.Length - 1].Add(momentum);
 			// Обновляем веса
-			weights[weights.Length - 1].Add(deltaWeights[deltaWeights.Length - 1]);
+			weights[layersCount - 2].Add(deltaWeights[layersCount - 2]);
 
-			for (int i = weights.Length - 2; i >= 0; i--)
+			for (int i = layersCount - 3; i >= 0; i--)
 			{
 				// Расчитываем градиенты для H слоя
 				// Запоминаем выходные значения в вектор градиентов
-				gradients[i].Set(outputs[i]);
+				gradients[i].Set(outputs[i + 1]);
 				// Для выходных значений применяем производную функцию активации
 				gradients[i].Map(Mathf.SigmoidDerivative);
-				// Умножаем вес нейрона на градиент нейрона с которым связан этот нейрон, и умножаем получившееся значение на пред. действие
-				gradients[i].Scale(Vecf.Mul(gradients[i], Matf.Transpose(weights[i])));
+				// Применяем cost function
+				gradients[i].Scale(Vecf.Mul(gradients[i + 1], Matf.Transpose(weights[i + 1].SubMat(0, weights[i + 1].rows - 1, 0, weights[i+1].cols))));
 
 				// Пересчитываем силы связей
 				// Находим momentum rate
@@ -120,6 +118,38 @@ namespace IntComSys.AI
 				// Обновляем веса
 				weights[i].Add(deltaWeights[i]);
 			}
+		}
+
+		public override float[] GetArrayOutputs(int layer)
+		{
+			if (layer < 0 || layer >= layersCount)
+				throw new ArgumentException();
+
+			return outputs[layer].ToArray();
+		}
+
+		public override float[,] GetArrayWeights(int toLayer)
+		{
+			if (toLayer < 0 || toLayer >= layersCount)
+				throw new ArgumentException();
+
+			return weights[toLayer].ToArray();
+		}
+
+		public override Vecf GetVectorOutputs(int layer)
+		{
+			if (layer < 0 || layer >= layersCount)
+				throw new ArgumentException();
+
+			return new Vecf(0);
+		}
+
+		public override Matf GetMatrixWeights(int toLayer)
+		{
+			if (toLayer < 0 || toLayer >= layersCount)
+				throw new ArgumentException();
+
+			return new Matf(0, 0);
 		}
 	}
 }
