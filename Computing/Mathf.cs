@@ -16,5 +16,10 @@
 		{
 			return (x * (1 - x));
 		}
+
+		public static float Sqrt(float x)
+		{
+			return (float)System.Math.Sqrt(x);
+		}
 	}
 }

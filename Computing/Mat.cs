@@ -2,7 +2,7 @@
 
 namespace IntComSys.Computing
 {
-	public class Mat<T> where T : struct
+	public abstract class Mat<T> where T : struct
 	{
 		public readonly int rows;
 		public readonly int cols;
@@ -31,15 +31,7 @@ namespace IntComSys.Computing
 			elements = new T[size];
 		}
 
-		public virtual Mat<T> Copy()
-		{
-			Mat<T> result = new Mat<T>(rows, cols);
-			for (int i = 0; i < size; i++)
-			{
-				result.elements[i] = elements[i];
-			}
-			return result;
-		}
+		public abstract Mat<T> Copy();
 
 		public override string ToString()
 		{
@@ -59,108 +51,37 @@ namespace IntComSys.Computing
 			return result;
 		}
 
-		public static Mat<T> FromArray(T[,] arr)
-		{
-			Mat<T> result = new Mat<T>(arr.GetLength(0), arr.GetLength(1));
-			int e = 0;
-			for (int i = 0; i < result.rows; i++)
-			{
-				for (int j = 0; j < result.cols; j++)
-				{
-					result.elements[e++] = arr[i, j];
-				}
-			}
-			return result;
-		}
-
-		public static Mat<T> FromArray(T[] arr, int n, int m)
-		{
-			if (n * m != arr.Length)
-				throw new ArgumentException();
-
-			Mat<T> result = new Mat<T>(n, m);
-			for (int i = 0; i < result.size; i++)
-			{
-				result.elements[i] = arr[i];
-			}
-			return result;
-		}
-
 		public virtual Mat<T> SubMat(int y, int x)
 		{
 			return SubMat(y, rows - y, x, cols - x);
 		}
 
-		public virtual Mat<T> SubMat(int row, int rows, int col, int cols)
-		{
-			Mat<T> result = new Mat<T>(rows, cols);
-			int endRow = row + rows;
-			int endCol = col + cols;
-			for (int y = row, res_y = 0; y < endRow; y++, res_y++)
-			{
-				for (int x = col, res_index = res_y * cols, index = y * this.cols;
-					x < endCol;
-					x++, res_index++)
-				{
-					result.elements[res_index] = elements[index + x];
-				}
-			}
-			return result;
-		}
+		public abstract Mat<T> SubMat(int row, int rows, int col, int cols);
 
-		public virtual Mat<T> Transpose()
-		{
-			Mat<T> result = new Mat<T>(cols, rows);
-			for (int y = 0, index = 0; y < rows; y++, index += cols)
-			{
-				for (int x = 0, res_index = 0; x < cols; x++, res_index += rows)
-				{
-					result.elements[res_index + y] = elements[index + x];
-				}
-			}
-			return result;
-		}
+		public abstract Mat<T> Transpose();
+
+		public abstract T Dot(Mat<T> m1, Mat<T> m2);
 
 		#region Get / Set
 
-		public void GetRow(int row, out Mat<T> m)
-		{
-			Mat<T> result = new Mat<T>(1, cols);
-			for (int i = 0, offset = row * cols; i < cols; i++, offset++)
-			{
-				result.elements[i] = elements[offset];
-			}
-			m = result;
-		}
-
-		public void GetRow(int row, out T[] arr)
+		public T[] GetRow(int row)
 		{
 			T[] result = new T[cols];
 			for (int i = 0, offset = row * cols; i < cols; i++, offset++)
 			{
 				result[i] = elements[offset];
 			}
-			arr = result;
+			return result;
 		}
 
-		public void GetCol(int col, out Mat<T> m)
-		{
-			Mat<T> result = new Mat<T>(rows, 1);
-			for (int i = 0, offset = 0; i < rows; i++, offset += cols)
-			{
-				result.elements[i] = elements[offset + col];
-			}
-			m = result;
-		}
-
-		public void GetCol(int col, out T[] arr)
+		public T[] GetCol(int col)
 		{
 			T[] result = new T[rows];
 			for (int i = 0, offset = 0; i < rows; i++, offset += cols)
 			{
 				result[i] = elements[offset + col];
 			}
-			arr = result;
+			return result;
 		}
 
 		public void SetRow(int row, Mat<T> m)

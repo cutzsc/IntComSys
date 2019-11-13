@@ -57,12 +57,19 @@ namespace IntComSys.AI
 				throw new ArgumentException();
 
 			// Установить начальные значения для входного слоя
-			outputs[0].Set(0, dimension[0], inputs);
+			for (int i = 0; i < dimension[0]; i++)
+			{
+				outputs[0].elements[i] = inputs[i];
+			}
 
 			for (int i = 0; i < outputs.Length - 1; i++)
 			{
 				// Расчитываем выходные значения для первого после входного слоя
-				outputs[i + 1].Set(0, dimension[i + 1], Vecf.Mul(outputs[i], weights[i]));
+				Vecf res = Vecf.ParallelMul(outputs[i], weights[i]);
+				for (int j = 0; j < res.size; j++)
+				{
+					outputs[i + 1].elements[j] = res.elements[j];
+				}
 				// Применяем функцию активации для каждого выходного значения
 				outputs[i + 1].Map(0, dimension[i + 1], Mathf.Sigmoid);
 			}
@@ -89,13 +96,12 @@ namespace IntComSys.AI
 			Matf momentum = Matf.Scale(deltaWeights[layersCount - 2], alpha);
 			// Расчитываем новые веса, eta * output * gradient
 			// eta - learning rate, output - значение нейрона от которого идет связь, gradient - градиент нейрона к которому идет связь
-			deltaWeights[layersCount - 2] = Matf.Mul(outputs[layersCount - 2], gradients[layersCount - 2]);
+			deltaWeights[layersCount - 2] = Matf.ParallelMul(outputs[layersCount - 2], gradients[layersCount - 2]);
 			deltaWeights[layersCount - 2].Scale(eta);
 			// Прибавляем momentum rate к learning rate
 			deltaWeights[deltaWeights.Length - 1].Add(momentum);
 			// Обновляем веса
 			weights[layersCount - 2].Add(deltaWeights[layersCount - 2]);
-
 
 			for (int i = layersCount - 3; i >= 0; i--)
 			{
@@ -105,14 +111,14 @@ namespace IntComSys.AI
 				// Для выходных значений применяем производную функцию активации
 				gradients[i].Map(Mathf.SigmoidDerivative);
 				// Применяем cost function
-				gradients[i].Scale(Vecf.Mul(gradients[i + 1], (Matf)weights[i + 1].SubMat(0, weights[i + 1].rows - 1, 0, weights[i + 1].cols).Transpose()));
+				gradients[i].Scale(Vecf.ParallelMul(gradients[i + 1], (Matf)weights[i + 1].SubMat(0, weights[i + 1].rows - 1, 0, weights[i + 1].cols).Transpose()));
 
 				// Пересчитываем силы связей
 				// Находим momentum rate
 				momentum = Matf.Scale(deltaWeights[i], alpha);
 				// Расчитываем новые веса eta * output * gradient
 				// eta - learning rate, output - значение нейрона от которого идет связь, gradient - градиент нейрона к которому идет связь
-				deltaWeights[i] = Matf.Mul(outputs[i], gradients[i]);
+				deltaWeights[i] = Matf.ParallelMul(outputs[i], gradients[i]);
 				deltaWeights[i].Scale(eta);
 				// Прибавляем momentum rate к learning rate
 				deltaWeights[i].Add(momentum);

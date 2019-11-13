@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace IntComSys.Computing
 {
@@ -6,6 +7,16 @@ namespace IntComSys.Computing
 	{
 		public Vecf(int size)
 			: base(size) { }
+
+		public static Vecf FromArray(float[] arr)
+		{
+			Vecf result = new Vecf(arr.Length);
+			for (int i = 0; i < result.size; i++)
+			{
+				result.elements[i] = arr[i];
+			}
+			return result;
+		}
 
 		public override Vec<float> Copy()
 		{
@@ -43,6 +54,14 @@ namespace IntComSys.Computing
 			if (v == null)
 				return false;
 			return this == v;
+		}
+
+		public override float Dot(Vec<float> v1, Vec<float> v2)
+		{
+			if (v1.size != v2.size)
+				throw new ArgumentException();
+
+			throw new NotImplementedException();
 		}
 
 		public static bool operator ==(Vecf left, Vecf right)
@@ -233,6 +252,24 @@ namespace IntComSys.Computing
 				}
 				result.elements[x] = sum;
 			}
+			return result;
+		}
+
+		public static Vecf ParallelMul(Vecf v, Matf m)
+		{
+			if (v.size != m.rows)
+				throw new ArgumentException();
+
+			Vecf result = new Vecf(m.cols);
+			Parallel.For(0, m.cols, new ParallelOptions() { MaxDegreeOfParallelism = Environment.ProcessorCount }, (x) =>
+			{
+				float sum = 0;
+				for (int y = 0, offset = 0; y < m.rows; y++, offset += m.cols)
+				{
+					sum += v.elements[y] * m.elements[offset + x];
+				}
+				result.elements[x] = sum;
+			});
 			return result;
 		}
 

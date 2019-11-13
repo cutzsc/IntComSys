@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace IntComSys.Computing
@@ -10,6 +7,32 @@ namespace IntComSys.Computing
 	{
 		public Matf(int n, int m)
 			: base(n, m) { }
+
+		public static Matf FromArray(float[,] arr)
+		{
+			Matf result = new Matf(arr.GetLength(0), arr.GetLength(1));
+			for (int i = 0, e = 0; i < result.rows; i++)
+			{
+				for (int j = 0; j < result.cols; j++)
+				{
+					result.elements[e++] = arr[i, j];
+				}
+			}
+			return result;
+		}
+
+		public static Matf FromArray(float[] arr, int n, int m)
+		{
+			if (n * m != arr.Length)
+				throw new ArgumentException();
+
+			Matf result = new Matf(n, m);
+			for (int i = 0; i < result.size; i++)
+			{
+				result.elements[i] = arr[i];
+			}
+			return result;
+		}
 
 		public override Mat<float> Copy()
 		{
@@ -64,6 +87,15 @@ namespace IntComSys.Computing
 				return false;
 
 			return this == m;
+		}
+
+		public override float Dot(Mat<float> m1, Mat<float> m2)
+		{
+			if (m1.rows != m2.rows ||
+				m1.cols != m2.cols)
+				throw new ArgumentException();
+
+			throw new NotImplementedException();
 		}
 
 		public static bool operator ==(Matf left, Matf right)
@@ -252,9 +284,23 @@ namespace IntComSys.Computing
 			return result;
 		}
 
+		public static Matf ParallelMul(Vecf vertical, Vecf horizontal)
+		{
+			Matf result = new Matf(vertical.size, horizontal.size);
+
+			Parallel.For(0, result.rows, new ParallelOptions() { MaxDegreeOfParallelism = Environment.ProcessorCount }, (row) =>
+			{
+				for (int col = 0, index = row * result.cols; col < result.cols; col++, index++)
+				{
+					result.elements[index] = vertical.elements[row] * horizontal.elements[col];
+				}
+			});
+			return result;
+		}
+
 		#endregion
 
-		#region scale
+		#region Scale
 
 		public static Matf Scale(Matf m1, Matf m2)
 		{
