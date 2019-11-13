@@ -8,6 +8,9 @@ using IntComSys.Computing;
 namespace IntComSys.AI
 {
 	public abstract class NeuralNetwork<T, V, M>
+		where T : struct
+		where V : Vec<T>
+		where M : Mat<T>
 	{
 		public readonly int[] dimension;
 		public readonly int layersCount;

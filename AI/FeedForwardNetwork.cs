@@ -96,6 +96,7 @@ namespace IntComSys.AI
 			// Обновляем веса
 			weights[layersCount - 2].Add(deltaWeights[layersCount - 2]);
 
+
 			for (int i = layersCount - 3; i >= 0; i--)
 			{
 				// Расчитываем градиенты для H слоя
@@ -104,7 +105,7 @@ namespace IntComSys.AI
 				// Для выходных значений применяем производную функцию активации
 				gradients[i].Map(Mathf.SigmoidDerivative);
 				// Применяем cost function
-				gradients[i].Scale(Vecf.Mul(gradients[i + 1], Matf.Transpose(weights[i + 1].SubMat(0, weights[i + 1].rows - 1, 0, weights[i+1].cols))));
+				gradients[i].Scale(Vecf.Mul(gradients[i + 1], (Matf)weights[i + 1].SubMat(0, weights[i + 1].rows - 1, 0, weights[i + 1].cols).Transpose()));
 
 				// Пересчитываем силы связей
 				// Находим momentum rate
