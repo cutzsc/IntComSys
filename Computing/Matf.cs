@@ -95,7 +95,12 @@ namespace IntComSys.Computing
 				m1.cols != m2.cols)
 				throw new ArgumentException();
 
-			throw new NotImplementedException();
+			float sum = 0;
+			for (int i = 0; i < size; i++)
+			{
+				sum += m1.elements[i] * m2.elements[i];
+			}
+			return sum;
 		}
 
 		public static bool operator ==(Matf left, Matf right)

@@ -42,9 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FeedForwardNetwork.cs" />
-    <Compile Include="Learning\GradientDescent.cs" />
-    <Compile Include="Learning\ILearningMethod.cs" />
-    <Compile Include="Learning\Trainer.cs" />
     <Compile Include="NeuralNetwork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
